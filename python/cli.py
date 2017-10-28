@@ -5,23 +5,25 @@ Boilerplate for a python CLI
 """
 
 import sys
+import Queue
 import logging
 import argparse
-import Queue
 import threading
 
 DEFAULTS = dict(
+    name='cli',
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] - %(message)s',
     log='cli.log'
 )
 
-def get_logger():
-    """Wrapper for logger creation"""
-    logger = logging.getLogger('cli')
-    logger.setLevel(DEFAULTS['level'])
 
-    formatter = logging.Formatter(DEFAULTS['format'])
+def get_logger(name, level=DEFAULTS['level'], fmt=DEFAULTS['format']):
+    """Wrapper for logger creation"""
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    formatter = logging.Formatter(fmt)
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
@@ -94,7 +96,7 @@ class CLI(object):
 
 def main():
     """Execution"""
-    logger = get_logger()
+    logger = get_logger(DEFAULTS['name'], DEFAULTS['level'], DEFAULTS['format'])
     args = get_args(sys.argv[1:], logger)
     cli = CLI(args, logger)
     cli.start()
